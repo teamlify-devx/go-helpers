@@ -1,5 +1,6 @@
 # go-helpers
 
-### Included
-- Test
-- Test 2
+### How to use/import !
+```shell
+go get github.com/teamlify-devx/go-helpers 
+```
