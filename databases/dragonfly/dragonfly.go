@@ -12,10 +12,10 @@ import (
 // NewDFClient Returns new DragonFly (using same driver with redis) client
 func NewDFClient(ctx context.Context, dbNum int) (db *redis.Client, err error) {
 
-	redisHost := fmt.Sprintf("%s:%d", cfg.GetString("Dragonfly.HOST"), cfg.GetInt("Dragonfly.PORT"))
+	connStr := fmt.Sprintf("%s:%d", cfg.GetString("Dragonfly.HOST"), cfg.GetInt("Dragonfly.PORT"))
 
 	db = redis.NewClient(&redis.Options{
-		Addr:         redisHost,
+		Addr:         connStr,
 		Username:     cfg.GetString("Dragonfly.USER"),
 		Password:     cfg.GetString("Dragonfly.PASS"),
 		MinIdleConns: cfg.GetInt("Dragonfly.MIN_IDLE_CONN"),
