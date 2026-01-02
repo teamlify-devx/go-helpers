@@ -3,7 +3,7 @@ package jwt
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"main/config"
+	cfg "github.com/spf13/viper"
 	"reflect"
 	"time"
 )
@@ -54,23 +54,34 @@ func New(config ...Config) fiber.Handler {
 	}
 }
 
-type TokenClaim struct {
-	UserID      int64  `json:"id" validate:"required"`
-	ParentID    int64  `json:"parent_id" validate:"required"`
-	UserType    int    `json:"type" validate:"required"`
-	Title       string `json:"title" validate:"required"`
-	HasOrg      bool   `json:"has_org" validate:"required"`
-	NdaSigned   bool   `json:"nda_signed" validate:"required"`
-	AccessToken string `json:"access_token,omitempty"`
-	Exp         int64  `json:"exp,omitempty"`
-	Iat         int64  `json:"iat,omitempty"`
-	jwt.RegisteredClaims
-}
+/*
+	GenerateToken generates a JWT token with the given claims and expiration time.
 
-func GenerateToken(cfg *config.Config, claims TokenClaim, expTime int64) (string, error) {
-	signingKey := []byte(cfg.Server.APP_SECRET)
-	claims.Iat = time.Now().Unix()
-	claims.Exp = expTime
+	Parameters:
+	- claims: A map of claims to include in the token.
+	- expTime: The expiration time for the token (Unix timestamp).
+
+	Returns:
+	- A signed JWT token as a string.
+	- An error if the token generation fails.
+
+Example payload
+
+	claims := jwt.MapClaims{
+		"user_id":    12345,
+		"parent_id":  67890,
+		"type":       1,
+		"title":      "User Title",
+		"has_org":    true,
+		"nda_signed": false,
+	}
+*/
+func GenerateToken(claims jwt.MapClaims, expTime int64) (string, error) {
+	signingKey := []byte(cfg.GetString("Server.APP_SECRET"))
+
+	claims["iat"] = time.Now().Unix()
+	claims["exp"] = expTime
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
