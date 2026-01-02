@@ -1,11 +1,12 @@
 package jwt
 
 import (
+	"reflect"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	cfg "github.com/spf13/viper"
-	"reflect"
-	"time"
 )
 
 var (
@@ -59,7 +60,7 @@ func New(config ...Config) fiber.Handler {
 
 	Parameters:
 	- claims: A map of claims to include in the token.
-	- expTime: The expiration time for the token (Unix timestamp).
+	- expTime: The expiration time for the token (as minutes).
 
 	Returns:
 	- A signed JWT token as a string.
@@ -76,11 +77,11 @@ Example payload
 		"nda_signed": false,
 	}
 */
-func GenerateToken(claims jwt.MapClaims, expTime int64) (string, error) {
+func GenerateToken(claims jwt.MapClaims, expTime int) (string, error) {
 	signingKey := []byte(cfg.GetString("Server.APP_SECRET"))
 
 	claims["iat"] = time.Now().Unix()
-	claims["exp"] = expTime
+	claims["exp"] = jwt.NewNumericDate(time.Now().Add(time.Duration(expTime) * time.Minute))
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(signingKey)
