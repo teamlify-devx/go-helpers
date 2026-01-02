@@ -68,7 +68,7 @@ func New(config ...Config) fiber.Handler {
 
 Example payload
 
-	claims := jwt.MapClaims{
+	claims := map[string]any {
 		"user_id":    12345,
 		"parent_id":  67890,
 		"type":       1,
@@ -77,13 +77,13 @@ Example payload
 		"nda_signed": false,
 	}
 */
-func GenerateToken(claims jwt.MapClaims, expTime int) (string, error) {
+func GenerateToken(claims map[string]any, expTime int) (string, error) {
 	signingKey := []byte(cfg.GetString("Server.APP_SECRET"))
 
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = jwt.NewNumericDate(time.Now().Add(time.Duration(expTime) * time.Minute))
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims(claims))
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
 }
