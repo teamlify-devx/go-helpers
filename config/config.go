@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"log"
+
+	"github.com/spf13/viper"
 )
 
 /*
@@ -20,7 +21,7 @@ func ParseConfig(conf interface{}, type_of, file_path, file_name string) (err er
 
 	viper.SetConfigName(configPath)
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err = viper.ReadInConfig(); err != nil {
 		return err
 	}
 
