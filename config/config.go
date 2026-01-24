@@ -35,3 +35,24 @@ func ParseConfig(conf interface{}, type_of, file_path, file_name string) (err er
 
 	return nil
 }
+
+/*
+LoadConfig Config file loader
+  - [type_of] : the type of config file (yaml, env, json etc)
+  - [file_path] : the path of your config file
+  - [file_name] : the file name of your config file
+  - you can find the example config.yaml and models.go file under config folder
+*/
+func LoadConfig(type_of, file_path, file_name string) (err error) {
+	viper.SetConfigType(type_of)
+	viper.AddConfigPath(file_path)
+	configPath := file_name
+
+	viper.SetConfigName(configPath)
+
+	if err = viper.ReadInConfig(); err != nil {
+		return err
+	}
+
+	return nil
+}
