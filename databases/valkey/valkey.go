@@ -1,6 +1,7 @@
 package valkey
 
 import (
+	"crypto/tls"
 	cfg "github.com/spf13/viper"
 	"github.com/valkey-io/valkey-go"
 )
@@ -11,11 +12,14 @@ func NewValkeyClient(dbNum int) (db valkey.Client, err error) {
 	connStr := cfg.GetStringSlice("Valkey.HOSTS")
 
 	options := valkey.ClientOption{
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 		InitAddress:           connStr,
 		SelectDB:              dbNum,
 		DisableCache:          cfg.GetBool("Valkey.DISABLE_CACHE"),
-		ReplicaOnly:           cfg.GetBool("Valkey.DISABLE_REPLICA"),
 		DisableAutoPipelining: cfg.GetBool("Valkey.DISABLE_AUTO_PIPELINING"),
+		ReplicaOnly:           cfg.GetBool("Valkey.DISABLE_REPLICA"),
 	}
 
 	if cfg.GetString("Valkey.USERNAME") != "" {
